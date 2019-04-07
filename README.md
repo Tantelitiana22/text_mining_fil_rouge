@@ -62,3 +62,4 @@ $|d_j,t_i \in d_j|$: Nombre de document où apparait le mot $t_i$ dans le corpus
   * NAÏF BAYES
   * SVM
   * LOGISTIQUE
+## Transformation avec des techniques de wordembeding :
