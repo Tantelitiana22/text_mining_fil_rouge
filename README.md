@@ -9,7 +9,7 @@ Tout d'abord, nous allons diviser notre travail en trois parties:
   * **DEVELOPPER**
   * **ACTUARIAT**
   * **DIGITAL MARKETING**
-
+  (Autres variables ajouter récements)
 
 * Nettoyage  et analyse descriptives des données retenus
 
