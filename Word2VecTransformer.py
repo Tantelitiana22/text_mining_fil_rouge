@@ -4,8 +4,18 @@ import nltk
 import numpy as np
 import logging
 
-class Embedding_skipGram:
-    # Variable generale pour le modele skyp-gram
+class Embedding_Word2Vec:
+    # Variable generale pour le modele skyp-gram/CBOW
+    
+    """
+    - n_size: ici corréspond à la taille de la couche caché qui va nous servir  comme étant le vecteur qui représente un mot.
+    - n_window: est la distance maximale entre le mot actuel et les mots qui lui corréspondent.
+    - n_workers: est le nombre de processeur que l'on souaite utiliser.
+    - n_min_count: on ignore les mots dont la fréquence est inféireur à cette paramètre.
+    - n_sg: nous permet de choisir entre skip-gram et cbow (par défaut skip-gram)
+    - n_sh: nous permet de choisir entre la fonction de soft max et le négatif simpling lorsque l'on va faire une déscente de gradien pour la partie optimisation.(valeur par défaut soft max)
+
+    """
     
     def __init__(self,n_size,n_window,n_min_count,n_workers,n_sg=1,n_hs=1):
         self.n_size=n_size
