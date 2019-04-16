@@ -3,6 +3,7 @@ from gensim.models.doc2vec import Doc2Vec,TaggedDocument
 from nltk.tokenize import word_tokenize
 from sklearn.preprocessing import MinMaxScaler
 from tqdm import tqdm
+from sklearn import utils
 
 class EmbeddingDoc2Vec:
     def __init__(self,dm=0, vector_size=300, negative=5, hs=0, min_count=2, sample = 0, workers=1,alpha=0.05, min_alpha=0.05):
