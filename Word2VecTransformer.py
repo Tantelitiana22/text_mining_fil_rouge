@@ -3,6 +3,7 @@ import pandas as pd
 import nltk
 import numpy as np
 import logging
+from sklearn.preprocessing import MinMaxScaler
 
 class Embedding_Word2Vec:
     # Variable generale pour le modele skyp-gram/CBOW
@@ -76,5 +77,7 @@ class Embedding_Word2Vec:
         wv=self.model.wv
       
         X_word_average = self.__word_averaging_list(self,self.model.wv,X_tokenized)
-        
-        return(X_word_average)
+        scaler = MinMaxScaler()
+        scaler.fit(X_word_average)
+        XresMinMax=scaler.transform(X_word_average)    
+        return(XresMinMax)
