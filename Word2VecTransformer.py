@@ -4,6 +4,7 @@ import nltk
 import numpy as np
 import logging
 from sklearn.preprocessing import MinMaxScaler
+import sys
 
 class Embedding_Word2Vec:
     # Variable generale pour le modele skyp-gram/CBOW
@@ -18,38 +19,46 @@ class Embedding_Word2Vec:
 
     """
     
-    def __init__(self,n_size,n_window,n_min_count,n_workers,n_sg=1,n_hs=1):
+    def __init__(self,n_size,n_window,n_min_count,n_workers,n_sg=1,n_hs=1,IncludeSimilarity=0.5):
         self.n_size=n_size
         self.n_window=n_window
         self.n_min_count=n_min_count
         self.n_workers=n_workers
         self.n_hs=n_hs
         self.n_sg=n_sg
+        if IncludeSimilarity> 1 or IncludeSimilarity<-1:
+            print("IncludeSimilarity most be between -1 and 1!")
+            sys.exit(1)
+        self.IncludeSimilarity=IncludeSimilarity
         global model
     # Calculer la moyenne des mots à patie des vecteurs de mots.
-    @staticmethod
-    def __word_averaging(self,wv, words):
-        all_words, mean = set(), []
-    
-        for word in words:
-            if isinstance(word, np.ndarray):
-                mean.append(word)
-            elif word in wv.vocab:
-                mean.append(wv.syn0norm[wv.vocab[word].index])
-                all_words.add(wv.vocab[word].index)
 
-        if not mean:
-            #logging.warning("ne peut pas calculer la similarité sans entrée %s", words)
-            #  On enleve les mots dont la moyenne ne peut être calculer
-            return np.zeros(wv.vector_size,)
-        else:
-         
-            mean = gensim.matutils.unitvec(np.array(mean).mean(axis=0)).astype(np.float32)
-            return mean
-    ## Calcul sur l'ensemble du corpus
     @staticmethod
-    def  __word_averaging_list(self,wv, text_list):
-        return np.vstack([self.__word_averaging(self,wv, post) for post in text_list ])
+    def  __word_averaging_list(self, text_list):
+
+        result=[]
+        for words in text_list:
+            
+            test=np.random.randint(self.n_size,size=10)
+            res_temp=np.mean([self.model.wv[self.model.wv.index2word[t]] for t in test],axis=0)
+            
+            for w in words:
+                if w in self.model.wv:
+                    vect_word=self.model.wv[w]
+                    vect_word_norm=vect_word/np.linalg.norm(vect_word)
+                    result_norm=np.linalg.norm(res_temp)
+                    res_temp_norm=res_temp/result_norm
+                    # cosinus des mots 
+                    dists=np.dot(res_temp_norm,vect_word_norm)
+                    # Si le cosinus est inférieur à un seuil on n'ajoute
+                    # pas le vecteur
+                    if np.abs(dists)>self.IncludeSimilarity:
+                        res_temp=np.mean([res_temp,vect_word],axis=0)
+                 
+            result.append(res_temp)       
+        
+        return result
+
     
     # on fit notre modèle sur X ( X_train par exemple)
     def fit(self,X,y=None):
@@ -76,8 +85,10 @@ class Embedding_Word2Vec:
             X_tokenized = list(X.apply(lambda r: gensim.utils.simple_preprocess(r)))
         wv=self.model.wv
       
-        X_word_average = self.__word_averaging_list(self,self.model.wv,X_tokenized)
+        X_word_average = self.__word_averaging_list(self,X_tokenized)
+  
         scaler = MinMaxScaler()
         scaler.fit(X_word_average)
         XresMinMax=scaler.transform(X_word_average)    
         return(XresMinMax)
+    
